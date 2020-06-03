@@ -1,0 +1,59 @@
+{
+    "name": "creatvstudio/laravel-otp",
+    "description": "A Laravel package that handles Time based OTP",
+    "keywords": [
+        "creatvstudio",
+        "laravel",
+        "otp"
+    ],
+    "homepage": "https://github.com/creatvstudio/laravel-otp",
+    "license": "MIT",
+    "type": "library",
+    "support": {
+        "issues": "https://github.com/creatvstudio/laravel-otp/issues",
+        "source": "https://github.com/creatvstudio/laravel-otp"
+    },
+    "authors": [
+        {
+            "name": "Jeffrey Naval",
+            "email": "jeff@creatvstudio.ph"
+        }
+    ],
+    "require": {
+        "php": "^7.1",
+        "illuminate/support": "^6.0",
+        "spomky-labs/otphp": "^10.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^4.0",
+        "phpunit/phpunit": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "CreatvStudio\\Otp\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CreatvStudio\\Otp\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CreatvStudio\\Otp\\OtpServiceProvider"
+            ],
+            "aliases": {
+                "Otp": "CreatvStudio\\Otp\\Facades\\Otp"
+            }
+        }
+    }
+}
