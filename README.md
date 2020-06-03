@@ -21,7 +21,7 @@ composer require creatvstudio/laravel-otp
 
 Add trait to your User class
 
-``` php
+```php
 use CreatvStudio\Otp\HasOtp;
 
 class User extends Authenticable {
@@ -33,6 +33,26 @@ $otp = $user->getOtpCode();
 
 // Verify an OTP
 $user->verifyOtp($otp);
+```
+
+## Protecting routes
+
+Add to your `config/app.php`
+
+```php
+'aliases' => [
+    ...
+    'otp' => \CreatvStudio\Otp\Http\Middleware\CheckOtpSession,
+    ...
+],
+```
+
+Use to your `routes/web.php`
+
+```php
+Otp::routes();
+
+Route::get('otp-protected')->middleware('otp');
 ```
 
 ### Testing
