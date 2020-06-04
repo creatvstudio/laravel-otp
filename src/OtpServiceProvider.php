@@ -11,19 +11,10 @@ class OtpServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /*
-         * Optional methods to load your package assets
-         */
+        // Optional methods to load your package assets
         if ($this->app->runningInConsole()) {
-            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-
-            $this->publishes([
-                __DIR__.'/../database/migrations' => database_path('migrations'),
-            ], 'otp-migrations');
-
-            $this->publishes([
-                __DIR__.'/../config/otp.php' => config_path('otp.php'),
-            ], 'otp-config');
+            $this->publishConfig();
+            $this->publishMigrations();
         }
     }
 
@@ -33,11 +24,35 @@ class OtpServiceProvider extends ServiceProvider
     public function register()
     {
         // Automatically apply the package configuration
-        $this->mergeConfigFrom(__DIR__.'/../config/config.php', 'otp');
+        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'otp');
 
         // Register the main class to use with the facade
         $this->app->singleton('otp', function () {
-            return new Otp;
+            return new Otp();
         });
+    }
+
+    protected function publishConfig()
+    {
+        $stub = __DIR__ . '/../config/config.php';
+
+        $target = config_path('otp.php');
+
+        $this->publishes([
+            $stub => $target,
+        ], 'otp.config');
+    }
+
+    protected function publishMigrations()
+    {
+        $timestamp = date('Y_m_d_His');
+
+        $stub = __DIR__ . '/../database/migrations/otp_setup_table.php';
+
+        $target = database_path('migrations/' . $timestamp . '_otp_setup_table.php');
+
+        $this->publishes([
+            $stub => $target,
+        ], 'otp.migrations');
     }
 }

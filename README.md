@@ -17,6 +17,24 @@ You can install the package via composer:
 composer require creatvstudio/laravel-otp
 ```
 
+Publish migrations using the following command:
+
+``` bash
+php artisan vendor:publish --tag="otp.migrations"
+```
+
+Run the migrations
+
+``` bash
+php artisan migrate
+```
+
+Publish config file using the following command:
+
+``` bash
+php artisan vendor:publish --tag="otp.config"
+```
+
 ## Usage
 
 Add trait to your User class
