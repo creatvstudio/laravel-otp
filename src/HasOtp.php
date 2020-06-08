@@ -1,10 +1,11 @@
 <?php
+
 namespace CreatvStudio\Otp;
 
-use OTPHP\TOTP;
-use OTPHP\Factory;
-use Illuminate\Support\Str;
 use CreatvStudio\Otp\OtpSession;
+use Illuminate\Support\Str;
+use OTPHP\Factory;
+use OTPHP\TOTP;
 use ParagonIE\ConstantTime\Base32;
 
 trait HasOtp
@@ -88,19 +89,6 @@ trait HasOtp
     }
 
     /**
-     * Generate a new OTP instance
-     *
-     * @return \OTPHP\TOTP
-     */
-    protected function generateOtpInstance()
-    {
-        $otp = TOTP::create($this->generateOtpSecret(), config('otp.period'));
-        $otp->setLabel($this->getOtpLabel());
-
-        return $otp;
-    }
-
-    /**
      * Otp attribute getter
      *
      * @return void
@@ -116,11 +104,12 @@ trait HasOtp
      * @param string $otp
      * @param int|null $timestamp
      * @param int|null $window
+     *
      * @return void
      */
     public function verifyOtp($otp, $timestamp = null, $window = null)
     {
-        $window = $window ?: config("otp.window");
+        $window = $window ?: config('otp.window');
 
         return $this->otp()->verify($otp, $timestamp, $window);
     }
@@ -138,5 +127,23 @@ trait HasOtp
     public function checkOtpSession($token)
     {
         return $this->otpSessions()->where('token', $token)->count() ? true : false;
+    }
+
+    public function getOtpQrCodeUri()
+    {
+        return $this->otp()->getQrCodeUri('https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' . $this[$this->otpUriName], $this[$this->otpUriName]);
+    }
+
+    /**
+     * Generate a new OTP instance
+     *
+     * @return \OTPHP\TOTP
+     */
+    protected function generateOtpInstance()
+    {
+        $otp = TOTP::create($this->generateOtpSecret(), config('otp.period'));
+        $otp->setLabel($this->getOtpLabel());
+
+        return $otp;
     }
 }
