@@ -2,6 +2,7 @@
 
 namespace CreatvStudio\Otp;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class OtpServiceProvider extends ServiceProvider
@@ -11,11 +12,16 @@ class OtpServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->loadViewsFrom(__DIR__ . '/resources/views', 'laravel-otp');
+
         // Optional methods to load your package assets
         if ($this->app->runningInConsole()) {
             $this->publishConfig();
             $this->publishMigrations();
+            $this->publish();
         }
+
+        Route::mixin(new OtpRouteMethods());
     }
 
     /**
@@ -54,5 +60,14 @@ class OtpServiceProvider extends ServiceProvider
         $this->publishes([
             $stub => $target,
         ], 'otp.migrations');
+    }
+
+    protected function publish()
+    {
+        $this->publishes([
+            __DIR__ . '/resources/views' => resource_path('views/otp'),
+            __DIR__ . '/Http/Controllers' => app_path('Http/Controllers/Otp'),
+
+        ], 'otp.modules');
     }
 }
