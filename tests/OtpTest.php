@@ -41,16 +41,18 @@ class OtpTest extends TestCase
     /**
      * @test
      */
-    public function user_can_create_otp_qrcode_uri()
+    public function user_can_create_otp_qrcode()
     {
         // Arrange
         $user = $this->generateUser();
 
         // Act
-        $qrCode = $user->getOtpQrCodeUri();
+        $qrCode = $user->getOtpQrCode();
 
         // Assert
         $this->assertNotNull($qrCode);
+
+        $this->assertTrue(false !== filter_var($qrCode, FILTER_VALIDATE_URL));
     }
 
     /** @test */

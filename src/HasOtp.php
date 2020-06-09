@@ -129,7 +129,7 @@ trait HasOtp
         return $this->otpSessions()->where('token', $token)->count() ? true : false;
     }
 
-    public function getOtpQrCodeUri()
+    public function getOtpQrCode()
     {
         return $this->otp()->getQrCodeUri('https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' . $this[$this->otpUriName], $this[$this->otpUriName]);
     }

@@ -1,8 +1,6 @@
 <?php
 
-/*
- * You can place your custom package configuration in here.
- */
+// You can place your custom package configuration in here.
 return [
     'session' => \CreatvStudio\Otp\OtpSession::class,
 
