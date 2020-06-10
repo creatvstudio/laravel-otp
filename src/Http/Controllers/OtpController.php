@@ -9,9 +9,18 @@ use Illuminate\Support\Str;
 
 class OtpController extends Controller
 {
-    public function __construct()
+    public function __construct(Request $request)
     {
-        $this->middleware('auth');
+        $this->middleware([
+            'auth',
+            function ($request, $next) {
+                if (auth()->user()->checkOtpSession($request->cookie('otp_session'))) {
+                    return back();
+                }
+
+                return $next($request);
+            },
+        ]);
     }
 
     public function index()
