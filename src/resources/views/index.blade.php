@@ -31,24 +31,16 @@
 							<button type="submit" class="bg-blue-500 hover:bg-blue-700 text-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
 								{{ __('Verify') }}
 							</button>
-
-							@if (Route::has('password.request'))
-							<a class="text-sm text-blue-500 hover:text-blue-700 whitespace-no-wrap no-underline ml-auto" href="{{ route('password.request') }}">
-								{{ __('Forgot Your Password?') }}
-							</a>
-							@endif
-
-							@if (Route::has('register'))
-							<p class="w-full text-xs text-center text-gray-700 mt-8 -mb-4">
-								{{ __("Don't have an account?") }}
-								<a class="text-blue-500 hover:text-blue-700 no-underline" href="{{ route('register') }}">
-									{{ __('Register') }}
-								</a>
-							</p>
-							@endif
 						</div>
 					</form>
 
+					<form method="post" action="{{ route('otp.resend') }}" class="w-full text-xs text-center text-gray-700 mb-6">
+						@csrf
+						{{ __("Are you having problem providing OTP Code?") }}
+						<button type="submit" class="text-blue-500 hover:text-blue-700 no-underline" href="{{ route('register') }}">
+							{{ __('Resend') }}
+						</button>
+					</form>
 				</div>
 			</div>
 		</div>
