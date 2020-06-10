@@ -12,13 +12,13 @@ class OtpServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
         $this->loadViewsFrom(__DIR__ . '/resources/views', 'laravel-otp');
 
         // Optional methods to load your package assets
         if ($this->app->runningInConsole()) {
-            $this->publishConfig();
-            $this->publishMigrations();
             $this->publish();
+            $this->publishConfig();
         }
 
         Route::mixin(new OtpRouteMethods());
@@ -49,25 +49,14 @@ class OtpServiceProvider extends ServiceProvider
         ], 'otp.config');
     }
 
-    protected function publishMigrations()
-    {
-        $timestamp = date('Y_m_d_His');
-
-        $stub = __DIR__ . '/../database/migrations/otp_setup_table.php';
-
-        $target = database_path('migrations/' . $timestamp . '_otp_setup_table.php');
-
-        $this->publishes([
-            $stub => $target,
-        ], 'otp.migrations');
-    }
-
     protected function publish()
     {
+        $timestamp = date('Y_m_d_His');
         $this->publishes([
-            __DIR__ . '/resources/views' => resource_path('views/otp'),
+            __DIR__ . '/../database/migrations/otp_setup_table.php' => database_path('migrations/' . $timestamp . '_otp_setup_table.php'),
             __DIR__ . '/Http/Controllers' => app_path('Http/Controllers/Otp'),
+            __DIR__ . '/resources/views' => resource_path('views/otp'),
 
-        ], 'otp.modules');
+        ], 'otp');
     }
 }
