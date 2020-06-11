@@ -19,7 +19,16 @@ class CheckOtpSession
     public function handle(Request $request, Closure $next)
     {
         if (! Auth::user()->checkOtpSession($request->cookie('otp_session'))) {
-            return redirect('/otp');
+            if (! auth()->user()[auth()->user()->getOtpUriName()]) {
+                auth()->user()->updateOtpUri();
+            }
+
+            if (! session()->has('otp_intended_url')) {
+                session(['otp_intended_url' => $request->url()]);
+                session()->save();
+            }
+
+            return redirect(route('otp.index'));
         }
 
         return $next($request);

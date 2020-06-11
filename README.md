@@ -17,16 +17,26 @@ You can install the package via composer:
 composer require creatvstudio/laravel-otp
 ```
 
-Publish migrations using the following command:
+Publish package
 
 ``` bash
-php artisan vendor:publish --tag="otp.migrations"
+php artisan vendor:publish --tag="otp"
 ```
 
 Run the migrations
 
 ``` bash
 php artisan migrate
+```
+
+Add to your `config/app.php`
+
+```php
+aliases => [
+    ... 	
+    'Otp' => \CreatvStudio\Otp\Facades\Otp::class,
+    ...
+],
 ```
 
 Publish config file using the following command:
@@ -55,23 +65,17 @@ $user->verifyOtp($otp);
 
 ## Protecting routes
 
-Add to your `config/app.php`
-
-```php
-'aliases' => [
-    ...
-    'otp' => \CreatvStudio\Otp\Http\Middleware\CheckOtpSession,
-    ...
-],
-```
-
 Use to your `routes/web.php`
 
 ```php
 Otp::routes();
 
-Route::get('otp-protected')->middleware('otp');
+Route::middleware(['auth'])->group(function(){
+    Route::get('otp-protected')->middleware('otp');	
+});
 ```
+
+> <br>Note: Default Laravel Authentication is required to make the otp routes work properly.<br><br>
 
 ### Testing
 

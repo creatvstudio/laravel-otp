@@ -2,6 +2,7 @@
 
 namespace CreatvStudio\Otp;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class OtpServiceProvider extends ServiceProvider
@@ -11,10 +12,12 @@ class OtpServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Route::mixin(new OtpRouteMethods());
+
         // Optional methods to load your package assets
         if ($this->app->runningInConsole()) {
+            $this->publish();
             $this->publishConfig();
-            $this->publishMigrations();
         }
     }
 
@@ -32,6 +35,11 @@ class OtpServiceProvider extends ServiceProvider
         });
     }
 
+    public function loadRoutes()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+    }
+
     protected function publishConfig()
     {
         $stub = __DIR__ . '/../config/config.php';
@@ -43,16 +51,14 @@ class OtpServiceProvider extends ServiceProvider
         ], 'otp.config');
     }
 
-    protected function publishMigrations()
+    protected function publish()
     {
         $timestamp = date('Y_m_d_His');
-
-        $stub = __DIR__ . '/../database/migrations/otp_setup_table.php';
-
-        $target = database_path('migrations/' . $timestamp . '_otp_setup_table.php');
-
         $this->publishes([
-            $stub => $target,
-        ], 'otp.migrations');
+            __DIR__ . '/../database/migrations/otp_setup_table.php' => database_path('migrations/' . $timestamp . '_otp_setup_table.php'),
+            __DIR__ . '/Http/Controllers' => app_path('Http/Controllers/Otp'),
+            __DIR__ . '/resources/views' => resource_path('views/otp'),
+
+        ], 'otp');
     }
 }

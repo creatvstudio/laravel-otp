@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Facade;
  */
 class Otp extends Facade
 {
+    public static function routes(array $options = [])
+    {
+        static::$app->make('router')->otp($options);
+    }
+
     /**
      * Get the registered name of the component.
      *
