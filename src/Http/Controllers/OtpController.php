@@ -16,7 +16,16 @@ class OtpController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware([
+            'auth',
+            function ($request, $next) {
+                if (Auth::user()->checkOtpSession($request->cookie($this->getOtpSessionId()))) {
+                    return back();
+                }
+
+                return $next($request);
+            },
+        ]);
     }
 
     public function index()

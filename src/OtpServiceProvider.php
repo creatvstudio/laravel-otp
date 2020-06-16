@@ -12,16 +12,13 @@ class OtpServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
-        $this->loadViewsFrom(__DIR__ . '/resources/views', 'laravel-otp');
+        Route::mixin(new OtpRouteMethods());
 
         // Optional methods to load your package assets
         if ($this->app->runningInConsole()) {
             $this->publish();
             $this->publishConfig();
         }
-
-        Route::mixin(new OtpRouteMethods());
     }
 
     /**
@@ -36,6 +33,11 @@ class OtpServiceProvider extends ServiceProvider
         $this->app->singleton('otp', function () {
             return new Otp();
         });
+    }
+
+    public function loadRoutes()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
     }
 
     protected function publishConfig()

@@ -20,6 +20,10 @@ class OtpTest extends TestCase
         parent::setUp();
 
         $this->setUpDatabase();
+
+        $provider = new OtpServiceProvider($this->app);
+
+        $provider->loadRoutes(__DIR__ . '/routes.php');
     }
 
     /** @test */

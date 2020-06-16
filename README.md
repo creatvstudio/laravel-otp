@@ -70,8 +70,12 @@ Use to your `routes/web.php`
 ```php
 Otp::routes();
 
-Route::get('otp-protected')->middleware('otp');
+Route::middleware(['auth'])->group(function(){
+    Route::get('otp-protected')->middleware('otp');	
+});
 ```
+
+> <br>Note: Default Laravel Authentication is required to make the otp routes work properly.<br><br>
 
 ### Testing
 

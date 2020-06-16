@@ -34,13 +34,15 @@
 						</div>
 					</form>
 
-					<form method="post" action="{{ route('otp.resend') }}" class="w-full text-xs text-center text-gray-700 mb-6">
-						@csrf
-						{{ __("Are you having problem providing OTP Code?") }}
-						<button type="submit" class="text-blue-500 hover:text-blue-700 no-underline" href="{{ route('register') }}">
-							{{ __('Resend') }}
-						</button>
-					</form>
+					@if(Route::has('otp.resend'))
+						<form method="post" action="{{ route('otp.resend') }}" class="w-full text-xs text-center text-gray-700 mb-6">
+							@csrf
+							{{ __("Are you having problem providing OTP Code?") }}
+							<button type="submit" class="text-blue-500 hover:text-blue-700 no-underline" href="{{ route('register') }}">
+								{{ __('Resend') }}
+							</button>
+						</form>
+					@endif
 				</div>
 			</div>
 		</div>
