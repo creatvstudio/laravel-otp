@@ -14,6 +14,10 @@ class Otp extends Facade
         static::$app->make('router')->otp($options);
     }
 
+    public static function send()
+    {
+    }
+
     /**
      * Get the registered name of the component.
      *
