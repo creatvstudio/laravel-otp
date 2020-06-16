@@ -3,11 +3,14 @@
 namespace CreatvStudio\Otp\Http\Middleware;
 
 use Closure;
+use CreatvStudio\Otp\ChecksOtpSessionIdentifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CheckOtpSession
 {
+    use ChecksOtpSessionIdentifier;
+
     /**
      * Handle an incoming request.
      *
@@ -18,14 +21,9 @@ class CheckOtpSession
      */
     public function handle(Request $request, Closure $next)
     {
-        if (! Auth::user()->checkOtpSession($request->cookie('otp_session'))) {
-            if (! auth()->user()[auth()->user()->getOtpUriName()]) {
-                auth()->user()->updateOtpUri();
-            }
-
-            if (! session()->has('otp_intended_url')) {
-                session(['otp_intended_url' => $request->url()]);
-                session()->save();
+        if (! Auth::user()->checkOtpSession($request->cookie($this->getOtpSessionId()))) {
+            if (! Auth::user()[Auth::user()->getOtpUriName()]) {
+                Auth::user()->updateOtpUri();
             }
 
             return redirect(route('otp.index'));
