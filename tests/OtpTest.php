@@ -77,14 +77,12 @@ class OtpTest extends TestCase
 
         $this->actingAs($user);
 
-        $otpSession = $user->otpSessions()->create([
-            'token' => 'valid-token',
-        ]);
+        $token = $user->rememberOtpSession();
 
         $request = new Request();
 
         $request->cookies->add([
-            'otp_session' => 'valid-token',
+            $user->getOtpSessionId() => $token,
         ]);
 
         $middleware = new CheckOtpSession();
@@ -103,14 +101,12 @@ class OtpTest extends TestCase
 
         $this->actingAs($user);
 
-        $otpSession = $user->otpSessions()->create([
-            'token' => 'valid-token',
-        ]);
+        $token = $user->rememberOtpSession();
 
         $request = new Request();
 
         $request->cookies->add([
-            'otp_session' => 'invalid-token',
+            $user->getOtpSessionId() => $token . 'invalid-token',
         ]);
 
         $middleware = new CheckOtpSession();
