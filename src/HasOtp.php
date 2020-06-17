@@ -3,6 +3,7 @@
 namespace CreatvStudio\Otp;
 
 use CreatvStudio\Otp\OtpSession;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use OTPHP\Factory;
 use OTPHP\TOTP;
@@ -132,6 +133,29 @@ trait HasOtp
     public function getOtpQrCode()
     {
         return $this->otp()->getQrCodeUri('https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=' . $this[$this->otpUriName], $this[$this->otpUriName]);
+    }
+
+    public function sendOtpCode()
+    {
+        logger('Hi ' . $this->name . '. Your new OTP Code is : ' . $this->getOtpCode());
+    }
+
+    public function getOtpSessionId()
+    {
+        return md5('otp_session_' . $this->id);
+    }
+
+    public function rememberOtpSession()
+    {
+        $token = Str::random(60);
+
+        $this->otpSessions()->create([
+            'token' => $token,
+        ]);
+
+        Cookie::queue(Cookie::forever($this->getOtpSessionId(), $token));
+
+        return $token;
     }
 
     /**

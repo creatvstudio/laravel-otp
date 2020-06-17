@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Otp;
 
 use App\Http\Controllers\Controller;
-use CreatvStudio\Otp\ChecksOtpSessionIdentifier;
 use CreatvStudio\Otp\RedirectsUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,14 +11,14 @@ use Illuminate\Support\Str;
 
 class OtpController extends Controller
 {
-    use RedirectsUsers, ChecksOtpSessionIdentifier;
+    use RedirectsUsers;
 
     public function __construct()
     {
         $this->middleware([
             'auth',
             function ($request, $next) {
-                if (Auth::user()->checkOtpSession($request->cookie($this->getOtpSessionId()))) {
+                if (Auth::user()->checkOtpSession($request->cookie(Auth::user()->getOtpSessionId()))) {
                     return back();
                 }
 
@@ -41,7 +40,7 @@ class OtpController extends Controller
                     'required',
                     function ($attribute, $value, $fail) {
                         if (! Auth::user()->verifyOtp($value)) {
-                            $fail($attribute . ' is invalid.');
+                            $fail('The OTP Code is invalid.');
                         }
                     },
                 ],
@@ -52,13 +51,15 @@ class OtpController extends Controller
             ]
         );
 
-        $this->rememberOtpSession();
+        Auth::user()->rememberOtpSession();
 
         return redirect()->intended($this->redirectPath());
     }
 
     public function resend()
     {
-        return 'Hi ' . Auth::user()->name . '. Your new OTP Code is : ' . Auth::user()->getOtpCode();
+        Auth::user()->sendOtpCode();
+
+        return redirect()->route('otp.index')->with('success', 'OTP Code has been sent.');
     }
 }
