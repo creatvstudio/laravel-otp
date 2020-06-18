@@ -18,17 +18,14 @@ class CheckOtpSession
      */
     public function handle(Request $request, Closure $next)
     {
-        if (! Auth::user()->checkOtpSession($request->cookie('otp_session'))) {
-            if (! auth()->user()[auth()->user()->getOtpUriName()]) {
-                auth()->user()->updateOtpUri();
+        if (! Auth::user()->checkOtpSession($request->cookie(Auth::user()->getOtpSessionId()))) {
+            if (! Auth::user()[Auth::user()->getOtpUriName()]) {
+                Auth::user()->updateOtpUri();
             }
 
-            if (! session()->has('otp_intended_url')) {
-                session(['otp_intended_url' => $request->url()]);
-                session()->save();
-            }
+            Auth::user()->sendOtpCode();
 
-            return redirect(route('otp.index'));
+            return redirect()->guest(route('otp.index'));
         }
 
         return $next($request);

@@ -48,7 +48,7 @@ class OtpServiceProvider extends ServiceProvider
 
         $this->publishes([
             $stub => $target,
-        ], 'otp.config');
+        ], 'otp-config');
     }
 
     protected function publish()
@@ -57,8 +57,8 @@ class OtpServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../database/migrations/otp_setup_table.php' => database_path('migrations/' . $timestamp . '_otp_setup_table.php'),
             __DIR__ . '/Http/Controllers' => app_path('Http/Controllers/Otp'),
-            __DIR__ . '/resources/views' => resource_path('views/otp'),
+            __DIR__ . '/resources/views' => resource_path('views/vendor/otp'),
 
-        ], 'otp');
+        ], 'otp-assets');
     }
 }

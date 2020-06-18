@@ -3,18 +3,22 @@
 namespace App\Http\Controllers\Otp;
 
 use App\Http\Controllers\Controller;
+use CreatvStudio\Otp\RedirectsUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 
 class OtpController extends Controller
 {
-    public function __construct(Request $request)
+    use RedirectsUsers;
+
+    public function __construct()
     {
         $this->middleware([
             'auth',
             function ($request, $next) {
-                if (auth()->user()->checkOtpSession($request->cookie('otp_session'))) {
+                if (Auth::user()->checkOtpSession($request->cookie(Auth::user()->getOtpSessionId()))) {
                     return back();
                 }
 
@@ -25,18 +29,18 @@ class OtpController extends Controller
 
     public function index()
     {
-        return view('otp.index');
+        return view('vendor.otp.index');
     }
 
-    public function verify()
+    public function verify(Request $request)
     {
-        request()->validate(
+        $request->validate(
             [
                 'otp' => [
                     'required',
                     function ($attribute, $value, $fail) {
-                        if (! auth()->user()->verifyOtp($value)) {
-                            $fail($attribute . ' is invalid.');
+                        if (! Auth::user()->verifyOtp($value)) {
+                            $fail('The OTP Code is invalid.');
                         }
                     },
                 ],
@@ -47,19 +51,15 @@ class OtpController extends Controller
             ]
         );
 
-        $token = Str::random();
+        Auth::user()->rememberOtpSession();
 
-        auth()->user()->otpSessions()->create([
-            'token' => $token,
-        ]);
-
-        Cookie::queue(Cookie::forever('otp_session', $token));
-
-        return redirect(session()->pull('otp_intended_url'));
+        return redirect()->intended($this->redirectPath());
     }
 
     public function resend()
     {
-        return 'Hi ' . auth()->user()->name . '. Your new OTP Code is : ' . auth()->user()->getOtpCode();
+        Auth::user()->sendOtpCode();
+
+        return redirect()->route('otp.index')->with('success', 'OTP Code has been sent.');
     }
 }
