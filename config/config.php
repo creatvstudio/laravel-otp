@@ -4,6 +4,8 @@
 return [
     'session' => \CreatvStudio\Otp\OtpSession::class,
 
+    'notification' => \App\Notifications\SendOtpNotification::class,
+
     /**
      * By default the number of digits is 6.
      * You can decide to use more (or less) digits.
@@ -33,4 +35,8 @@ return [
      * supports: md5, sha1, sha256 and sha512
      */
     'algorithm' => 'sha1',
+
+    'mail' => [
+        'subject' => env('APP_NAME') . ' One-Time Password',
+    ],
 ];
