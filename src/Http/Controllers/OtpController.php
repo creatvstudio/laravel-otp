@@ -34,22 +34,7 @@ class OtpController extends Controller
 
     public function verify(Request $request)
     {
-        $request->validate(
-            [
-                'otp' => [
-                    'required',
-                    function ($attribute, $value, $fail) {
-                        if (! Auth::user()->verifyOtp($value)) {
-                            $fail('The OTP Code is invalid.');
-                        }
-                    },
-                ],
-            ],
-            [],
-            [
-                'otp' => 'OTP Code',
-            ]
-        );
+        $request->validate($this->rules(), [], $this->messages());
 
         Auth::user()->rememberOtpSession();
 
@@ -61,5 +46,27 @@ class OtpController extends Controller
         Auth::user()->sendOtpCode();
 
         return redirect()->route('otp.index')->with('success', 'OTP Code has been sent.');
+    }
+
+    public function rules()
+    {
+        return [
+            'otp' => [
+                'required',
+
+                function ($attribute, $value, $fail) {
+                    if (! Auth::user()->verifyOtp($value)) {
+                        $fail('The OTP Code is invalid.');
+                    }
+                },
+            ],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'otp' => 'OTP Code',
+        ];
     }
 }

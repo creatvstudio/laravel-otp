@@ -20,7 +20,7 @@ composer require creatvstudio/laravel-otp
 Publish package
 
 ``` bash
-php artisan vendor:publish --tag="otp"
+php artisan vendor:publish --tag="otp-assets"
 ```
 
 Run the migrations
@@ -39,10 +39,23 @@ aliases => [
 ],
 ```
 
+Set your mail settings from `.env` file
+
+```bash
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=null
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
 Publish config file using the following command:
 
 ``` bash
-php artisan vendor:publish --tag="otp.config"
+php artisan vendor:publish --tag="otp-config"
 ```
 
 ## Usage
@@ -53,6 +66,7 @@ Add trait to your User class
 use CreatvStudio\Otp\HasOtp;
 
 class User extends Authenticable {
+    use Notifiable;
     use HasOtp;
 }
 
@@ -77,6 +91,23 @@ Route::middleware(['auth'])->group(function(){
 
 > <br>Note: Default Laravel Authentication is required to make the otp routes work properly.<br><br>
 
+## Customizing sending of OTP Code to Mail
+
+To customize the contents of email when sending OTP Code, just modify `./app/Notifications/SendOtpNotification.php`
+
+If you don't want to send OTP Code via mail, and use a different approach for sending OTP Code, you can add the following codes in `./app/User.php` model
+
+```php
+...
+
+public function sendOtpCode()
+{
+    // put your codes here...
+}
+
+...
+```
+
 ### Testing
 
 ``` bash
@@ -98,6 +129,7 @@ If you discover any security related issues, please email jeff@creatvstudio.ph i
 ## Credits
 
 - [Jeffrey Naval](https://github.com/creatvstudio)
+- [Samuel Magana](https://github.com/maganasamuel)
 - [All Contributors](../../contributors)
 
 ## License

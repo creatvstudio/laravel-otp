@@ -2,7 +2,9 @@
 
 namespace CreatvStudio\Otp;
 
+use CreatvStudio\Otp\Notifications\SendOtpNotification;
 use CreatvStudio\Otp\OtpSession;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 use OTPHP\Factory;
@@ -55,13 +57,6 @@ trait HasOtp
         return $this[$this->getOtpUriName()];
     }
 
-    public function updateOtpUri()
-    {
-        $this->update([
-            $this->otpUriName => $this->otp()->getProvisioningUri(),
-        ]);
-    }
-
     /**
      * Get an OTP code
      *
@@ -82,8 +77,6 @@ trait HasOtp
         if (! $this->otpInstance) {
             $this->otpInstance = ($uri = $this->getOtpUri()) ? Factory::loadFromProvisioningUri($uri)
                 : $this->generateOtpInstance();
-
-            $this[$this->otpUriName] = $this->otp()->getProvisioningUri();
         }
 
         return $this->otpInstance;
@@ -137,12 +130,16 @@ trait HasOtp
 
     public function sendOtpCode()
     {
-        logger('Hi ' . $this->name . '. Your new OTP Code is : ' . $this->getOtpCode());
+        $sendOtpNotification = Config::get('otp.notification');
+
+        $notification = new $sendOtpNotification($this->getOtpCode());
+
+        $this->notify($notification);
     }
 
     public function getOtpSessionId()
     {
-        return md5('otp_session_' . $this->id);
+        return md5('otp_session_' . $this->getKey());
     }
 
     public function rememberOtpSession()
@@ -167,6 +164,10 @@ trait HasOtp
     {
         $otp = TOTP::create($this->generateOtpSecret(), config('otp.period'));
         $otp->setLabel($this->getOtpLabel());
+
+        $this[$this->otpUriName] = $otp->getProvisioningUri();
+
+        $this->save();
 
         return $otp;
     }
