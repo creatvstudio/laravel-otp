@@ -19,10 +19,6 @@ class CheckOtpSession
     public function handle(Request $request, Closure $next)
     {
         if (! Auth::user()->checkOtpSession($request->cookie(Auth::user()->getOtpSessionId()))) {
-            if (! Auth::user()[Auth::user()->getOtpUriName()]) {
-                Auth::user()->updateOtpUri();
-            }
-
             Auth::user()->sendOtpCode();
 
             return redirect()->guest(route('otp.index'));
