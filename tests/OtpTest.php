@@ -118,25 +118,6 @@ class OtpTest extends TestCase
         $this->assertStringContainsStringIgnoringCase('/otp', $response->getTargetUrl());
     }
 
-    /**
-     * @test
-     */
-    public function user_can_update_otp_uri()
-    {
-        // Arrange
-        $user = $this->generateUser();
-
-        $this->actingAs($user);
-
-        // Act
-        $user->updateOtpUri();
-
-        // Assert
-        $this->assertNotNull($user[$user->getOtpUriName()]);
-        $this->assertTrue(false !== filter_var($user[$user->getOtpUriName()], FILTER_VALIDATE_URL));
-        $this->assertDatabaseHas('users', collect($user)->except(['created_at', 'updated_at', 'email_verified_at'])->all());
-    }
-
     protected function setUpDatabase()
     {
         $this->loadLaravelMigrations();
