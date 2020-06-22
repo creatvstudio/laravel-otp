@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace CreatvStudio\Otp\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
