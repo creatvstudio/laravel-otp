@@ -20,7 +20,7 @@ composer require creatvstudio/laravel-otp
 Publish package
 
 ``` bash
-php artisan vendor:publish --tag="otp-assets"
+php artisan vendor:publish --provider="CreatvStudio\Otp\OtpServiceProvider" 
 ```
 
 Run the migrations
@@ -95,18 +95,7 @@ Route::middleware(['auth'])->group(function(){
 
 To customize the contents of email when sending OTP Code, just modify `./app/Notifications/SendOtpNotification.php`
 
-If you don't want to send OTP Code via mail, and use a different approach for sending OTP Code, you can add the following codes in `./app/User.php` model
-
-```php
-...
-
-public function sendOtpCode()
-{
-    // put your codes here...
-}
-
-...
-```
+> <br>Note: Please refer to Official Laravel Documentation for [custom notifications](https://laravel.com/docs/7.x/notifications#custom-channels).<br><br>
 
 ### Testing
 
