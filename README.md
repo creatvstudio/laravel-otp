@@ -79,6 +79,15 @@ $user->verifyOtp($otp);
 
 ## Protecting routes
 
+Add the following codes to `$routeMiddleware` of `app/Http/Kernel.php`
+
+```php
+protected $routeMiddleware = [
+    ...
+    'otp' => \CreatvStudio\Otp\Http\Middleware\CheckOtpSession::class,	
+]
+```
+
 Use to your `routes/web.php`
 
 ```php
