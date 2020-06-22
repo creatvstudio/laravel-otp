@@ -12,8 +12,6 @@ class OtpServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Route::mixin(new OtpRouteMethods());
-
         // Optional methods to load your package assets
         if ($this->app->runningInConsole()) {
             $this->publish();
@@ -56,10 +54,10 @@ class OtpServiceProvider extends ServiceProvider
         $timestamp = date('Y_m_d_His');
         $this->publishes([
             __DIR__ . '/../database/migrations/otp_setup_table.php' => database_path('migrations/' . $timestamp . '_otp_setup_table.php'),
-            __DIR__ . '/Http/Controllers' => app_path('Http/Controllers/Otp'),
+            __DIR__ . '/../stubs/OtpController.stub' => app_path('Http/Controllers/OtpController.php'),
             __DIR__ . '/resources/views' => resource_path('views/vendor/otp'),
-            __DIR__ . '/Notifications' => app_path('Notifications'),
+            __DIR__ . '/../stubs/SendOtpNotification.stub' => app_path('Notifications/SendOtpNotification.php'),
 
-        ], 'otp-assets');
+        ], 'otp-stubs');
     }
 }
