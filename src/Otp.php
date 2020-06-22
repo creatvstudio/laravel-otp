@@ -2,10 +2,17 @@
 
 namespace CreatvStudio\Otp;
 
+use Illuminate\Support\Facades\Route;
+
 class Otp
 {
-    public static function session()
+    public function routes($options = [])
     {
-        // return the current otp session
+        Route::get('otp/verify', 'OtpController@index')->name('otp.index');
+        Route::post('otp/verify', 'OtpController@verify')->name('otp.verify');
+
+        if ($options['resend'] ?? true) {
+            Route::post('otp/resend', 'OtpController@resend')->name('otp.resend');
+        }
     }
 }

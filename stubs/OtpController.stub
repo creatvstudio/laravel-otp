@@ -1,6 +1,6 @@
 <?php
 
-namespace CreatvStudio\Otp\Http\Controllers;
+namespace App\Http\Controllers;
 
 use CreatvStudio\Otp\RedirectsUsers;
 use Illuminate\Http\Request;
