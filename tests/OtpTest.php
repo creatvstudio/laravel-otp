@@ -8,8 +8,10 @@ use CreatvStudio\Otp\OtpServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Orchestra\Testbench\TestCase;
 use OTPHP\TOTP;
 
@@ -145,9 +147,20 @@ class OtpTest extends TestCase
 
 class TestUser extends User
 {
-    use HasOtp;
+    use Notifiable, HasOtp;
 
     protected $table = 'users';
 
     protected $guarded = [];
+
+    public function sendOtpCode()
+    {
+        Notification::fake();
+
+        $sendOtpNotification = \CreatvStudio\Otp\Notifications\SendOtpNotification::class;
+
+        $notification = new $sendOtpNotification($this->getOtpCode());
+
+        $this->notify($notification);
+    }
 }
