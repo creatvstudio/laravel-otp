@@ -99,6 +99,8 @@ class OtpTest extends TestCase
     /** @test */
     public function middleware_redirects_invalid_otp_session()
     {
+        Notification::fake();
+
         $user = $this->generateUser();
 
         $this->actingAs($user);
@@ -118,6 +120,13 @@ class OtpTest extends TestCase
 
         $this->assertEquals($response->getStatusCode(), 302);
         $this->assertStringContainsStringIgnoringCase('/otp', $response->getTargetUrl());
+
+        Notification::assertSentTo([$user], \CreatvStudio\Otp\Notifications\SendOtpNotification::class);
+    }
+
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('otp.notification', \CreatvStudio\Otp\Notifications\SendOtpNotification::class);
     }
 
     protected function setUpDatabase()
@@ -152,15 +161,4 @@ class TestUser extends User
     protected $table = 'users';
 
     protected $guarded = [];
-
-    public function sendOtpCode()
-    {
-        Notification::fake();
-
-        $sendOtpNotification = \CreatvStudio\Otp\Notifications\SendOtpNotification::class;
-
-        $notification = new $sendOtpNotification($this->getOtpCode());
-
-        $this->notify($notification);
-    }
 }
