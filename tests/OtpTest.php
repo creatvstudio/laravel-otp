@@ -3,15 +3,19 @@
 namespace CreatvStudio\Otp\Tests;
 
 use CreatvStudio\Otp\HasOtp;
+use CreatvStudio\Otp\Http\Middleware\CheckOtpOnce;
 use CreatvStudio\Otp\Http\Middleware\CheckOtpSession;
 use CreatvStudio\Otp\OtpServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase;
 use OTPHP\TOTP;
 
@@ -122,6 +126,59 @@ class OtpTest extends TestCase
         $this->assertStringContainsStringIgnoringCase('/otp', $response->getTargetUrl());
 
         Notification::assertSentTo([$user], \CreatvStudio\Otp\Notifications\SendOtpNotification::class);
+    }
+
+    /**
+     * @test
+     */
+    public function middleware_redirects_invalid_otp_once_session()
+    {
+        // Arrange
+        Notification::fake();
+
+        $user = $this->generateUser();
+
+        $this->actingAs($user);
+
+        $request = new Request();
+
+        $middleware = new CheckOtpOnce();
+
+        // Act
+        $response = $middleware->handle($request, function () {
+            return new RedirectResponse('/otp/once');
+        });
+
+        // Assert
+        $this->assertEquals($response->getStatusCode(), 302);
+        $this->assertStringContainsStringIgnoringCase('/otp/once', $response->getTargetUrl());
+    }
+
+    /**
+     * @test
+     */
+    public function middleware_allows_valid_otp_once_session()
+    {
+        // Arrange
+        $user = $this->generateUser();
+
+        $this->actingAs($user);
+
+        $request = new Request();
+
+        $request->session()->put('otp_once', Str::random(60));
+
+        $middleware = new CheckOtpOnce();
+
+        // Act
+        $response = $middleware->handle($request, function () {
+            $successResponse = new Response();
+
+            return $successResponse;
+        });
+
+        // Assert
+        $this->assertEquals($response, 'foo');
     }
 
     protected function getEnvironmentSetUp($app)
