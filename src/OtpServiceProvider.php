@@ -55,6 +55,7 @@ class OtpServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../database/migrations/otp_setup_table.php' => database_path('migrations/' . $timestamp . '_otp_setup_table.php'),
             __DIR__ . '/../stubs/OtpController.stub' => app_path('Http/Controllers/OtpController.php'),
+            __DIR__ . '/../stubs/OtpOnceController.stub' => app_path('Http/Controllers/OtpOnceController.php'),
             __DIR__ . '/resources/views' => resource_path('views/vendor/otp'),
             __DIR__ . '/../stubs/SendOtpNotification.stub' => app_path('Notifications/SendOtpNotification.php'),
 
